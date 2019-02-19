@@ -1,0 +1,63 @@
+<html>
+	<head>
+	<meta http-equiv="refresh" content="30">
+	<title>login</title>
+
+	<style type="text/css">
+		.确认 {
+			background: #BBFFBB;
+
+		}
+		.未确认 {
+			background: #FFB5B5;
+		}
+		.定长显示 {
+			width:500px;  /*定长*/
+			overflow: hidden;  /*隐藏*/
+			text-overflow: ellipsis;  /*末尾省略号*/
+			white-space: nowrap;  /*不换行*/
+		}
+	</style>
+	</head>
+<body>
+	<table border="1" width="80%">	
+		<tr>
+			<td width="33%" class={{css_备份面板}}>
+				<a href="{% url 'backup_index' %}">备份面板告警状态</a>
+			</td>
+			<td width="33%" class={{css_消息面板}}>
+				<a href="{% url 'msgs_index' %}">消息面板告警状态</a>
+			</td>
+			<td width="33%" class={{css_一句话面板}}>
+				<a href="{% url 'oneword_index' %}">一句话面板告警状态</a>
+			</td>
+		</tr>
+	</table>
+	<table border="1">
+		<tr bgcolor="#CAFFFF">
+			<td>时间</td>
+			<td>来源</td>
+			<td>内容</td>
+			<td>确认状态</td>
+			<td>标记确认</td>
+		</tr>			
+	{% for i in 一句话数据_可迭代对象 %}
+		{% if  i.确认 == 'N' %}
+		<tr class="未确认">
+		{% else %}
+		<tr class="确认">
+		{% endif %}
+			<td>{{i.时间|date:"Y-m-d H-i-s"}} </td>
+			<td>{{i.来源}} </td>
+			<td>
+				<div class="定长显示">
+        		{{i.内容}}
+       			</div>
+			</td>
+			<td>{{i.确认}} </td>
+			<td><a href="{% url 'oneword_确认当前' %}?id={{i.id}}">确认</a></td>
+		</tr>
+	{% endfor %}
+	</table>
+</body>
+</html>

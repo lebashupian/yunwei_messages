@@ -1,0 +1,76 @@
+<html>
+	<head>
+	<meta http-equiv="refresh" content="30">
+	<title>login</title>
+
+	<style type="text/css">
+		.确认 {
+			background: #BBFFBB;
+
+		}
+		.未确认 {
+			background: #FFB5B5;
+		}
+		.未收到 {
+			background: #FFFF00;
+		}
+		.定长显示 {
+			width:500px;  /*定长*/
+			overflow: hidden;  /*隐藏*/
+			text-overflow: ellipsis;  /*末尾省略号*/
+			white-space: nowrap;  /*不换行*/
+		}
+	</style>
+	</head>
+<body>
+	<table border="1" width="80%">	
+		<tr>
+			<td width="33%" class={{css_备份面板}}>
+				<a href="{% url 'backup_index' %}">备份面板告警状态 {{备份未确认}}</a>
+			</td>
+			<td width="33%" class={{css_消息面板}}>
+				<a href="{% url 'msgs_index' %}">消息面板告警状态</a>
+			</td>
+			<td width="33%" class={{css_一句话面板}}>
+				<a href="{% url 'oneword_index' %}">一句话面板告警状态</a>
+			</td>
+		</tr>
+	</table>
+	<table border="1">
+		<tr bgcolor="#CAFFFF">
+			<td>备份日期</td>
+			<td>备份时间</td>
+			<td>备份来源</td>
+			<td>备份主机</td>
+			<td>备份文件</td>
+			<td>备份状态</td>
+			<td>确认状态</td>
+			<td>备份项目</td>
+			<td>确认链接</td>
+		</tr>			
+	{% for i in 备份数据_可迭代对象 %}
+		{% if i.确认状态 == 'Y' %}
+		<tr class="确认">
+		{% elif i.确认状态 == 'N' %}
+		<tr class="未确认">
+		{% else %}
+		<tr class="未收到">
+		{% endif %}
+			<td>{{i.备份日期|date:"Y-m-d"}} </td>
+			<td>{{i.备份时间|date:"H-i-s"}} </td>
+			<td>{{i.备份来源}} </td>
+			<td>{{i.备份主机}} </td>
+			<td>
+				<div class="定长显示">
+        		{{i.备份文件}}
+       			</div>
+			</td>
+			<td>{{i.备份状态}} </td>
+			<td>{{i.确认状态}} </td>
+			<td>{{i.备份项目}} </td>
+			<td><a href="{% url 'backup_确认当前' %}?id={{i.id}}">故障人工确认</a></td>
+		</tr>
+	{% endfor %}
+	</table>
+</body>
+</html>

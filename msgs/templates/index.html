@@ -1,0 +1,103 @@
+<html>
+	<head>
+	<meta http-equiv="refresh" content="30">
+	<title>login</title>
+
+	<style type="text/css">
+		.确认 {
+			background: #BBFFBB;
+		}
+		.未确认 {
+			background: #FFB5B5;
+		}
+		.定长显示 {
+			width:500px;  /*定长*/
+			overflow: hidden;  /*隐藏*/
+			text-overflow: ellipsis;  /*末尾省略号*/
+			white-space: nowrap;  /*不换行*/
+		}
+	</style>
+
+	<script type="text/javascript">
+		function selectV() {
+
+			select对象 = document.getElementById('select_id');
+			select选项 = select对象.value;
+			//alert(选项)
+			//alert('{% url 'msgs_index' %}?select_参数=1')
+			window.location.href="{% url 'msgs_index' %}?select_param="+select选项;
+		}
+		//这里使用了一个safe过滤器
+		var js数据 = {{ js脚本字典 | safe }} 
+		//将其视为js对象来处理
+		//alert(js数据.变量1)
+		//alert(js数据.变量2)
+		//alert(js数据.变量3)
+		//将其转化为JSON格式的字符串
+		var js数据 = JSON.stringify(js数据)
+		//alert(js数据)
+	</script>
+	</head>
+<body>
+	<audio id="报警声音" {{功能实现字典.报警响动}}  src="/static/movie.ogg" autoplay="autoplay"></audio>
+
+
+		你好: {{登录字典传递给后端.登录用户}} <a href="{% url 'login_out' %}">退出</a>  <a href="{% url '删除所有' %}">删除所有</a>  <a href="{% url '确认' %}">确认所有</a>
+
+	<table border="1" width="80%">	
+		<tr>
+			<td width="33%" class={{css_备份面板}}>
+				<a href="{% url 'backup_index' %}">备份面板告警状态</a>
+			</td>
+			<td width="33%" class={{css_消息面板}}>
+				<a href="{% url 'msgs_index' %}">消息面板告警状态</a>
+			</td>
+			<td width="33%" class={{css_一句话面板}}>
+				<a href="{% url 'oneword_index' %}">一句话面板告警状态</a>
+			</td>
+		</tr>
+	</table>
+		
+	<form action="{% url 'msgs_index' %}" method="POST">
+	    {% csrf_token %}
+		<select id="select_id" onChange="selectV()">
+		  <option value="display_all" {{ display字典.display_all  }}>显示所有(默认)</option>
+		  <option value="display_10"  {{ display字典.display_10  }}>显示10条</option>
+		  <option value="display_50"  {{ display字典.display_50  }}>显示50条</option>
+		  <option value="display_100" {{ display字典.display_100 }}>显示100条</option>
+		  <option value="display_200" {{ display字典.display_200 }}>显示200条</option>
+		</select>
+	</form>		
+		
+		<!-- session_key：{{keys}} <br> -->
+			<table border="1">
+			
+			<tr bgcolor="#CAFFFF">
+				<th>消息id   </th>
+				<th>消息时间 </th>
+				<th>消息来源 </th>
+				<th>来源文件 </th>
+				<th>确认状态</th>
+				<th> 消息内容 </th>
+				<th> 删除 </th>
+				<th> 标记为确认</th>
+			</tr>			
+		{% for i in 消息数据_可迭代对象 %}
+			{% if  i.状态 == 'N' %}
+			<tr class="未确认">
+			{% else %}
+			<tr class="确认">
+			{% endif %}
+				<th>{{i.id}} </th>
+				<th>{{i.时间}} </th>
+				<th>{{i.来源}} </th>
+				<th>{{i.文件}} </th>
+				<th>{{i.状态}}</th>
+				<th>{{i.消息}} </th>
+				<th><a href="{% url '删除当前' i.id %}">删除</a></th>
+				<th><a href="{% url '确认当前' %}?id={{i.id}}">确认</a></th>
+			</tr>
+		{% endfor %}
+		</table>
+</body>
+</html>
